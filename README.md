@@ -8,6 +8,9 @@ All that surrounds my internship at IMT-Atlantic.
 
 See my [internship report.](https://perso.ens-lyon.fr/guillaume.duboc/files/Rapport%20de%20Stage%20L3.pdf)
 
+## Build
+
+`pip install -r requirements.txt` should install all the needed dependencies.
 
 ## Architecture
 

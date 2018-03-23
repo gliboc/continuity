@@ -1,4 +1,4 @@
-pytensorflow
+tensorflow
 keras
 pygame
 Pillow
