@@ -3,50 +3,36 @@ Training function
 Evaluation function
 """
 
+import settings
 import sys
-# visualisations with tensorboard
+
 from keras.callbacks import TensorBoard
 
+from keras.models import Sequential   # sequential model type: simple linear stack of neural network layers
+from keras.layers import Dense, Dropout, Activation, Flatten   # core layers (most used)
+from keras.layers import Convolution2D, MaxPooling2D   # cnn layers
+from keras.utils import np_utils
+from keras.datasets import mnist
+
+import load_dataset as ld
+
 def deep_network():
-    
-    # importing hyper-parameters
-    from constants import a, b, c, nb_obj, kernel_size, filters, batch_size
+    settings.init()
 
-    # Sequential model type: simple linear stack of neural network layers
-    from keras.models import Sequential
-
-    # core layers (most used)
-    from keras.layers import Dense, Dropout, Activation, Flatten
-
-    # cnn layers
-    from keras.layers import Convolution2D, MaxPooling2D
-
-    # utilities
-    from keras.utils import np_utils
-
-    # just for testing
-    from keras.datasets import mnist
-
-    # actual model
     model = Sequential()
 
     # input layer
     model.add(Convolution2D(filters, kernel_size,
-                            activation='relu', input_shape=(a, b, c)))
-
-    # more layers
-    model.add(Convolution2D(filters, kernel_size, activation='relu'))
-    # reduce the number of parameters
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+                            activation='relu', input_shape=(settings.a, settings.b, settings.c)))
+    model.add(Convolution2D(settings.filters, settings.kernel_size, activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))    # reduce the number of parameters
 
     # additionnal random layer...
     #model.add(Convolution2D(128, (3, 3), activation='relu', padding='same'))
     # model.add(Dropout(0.2))
     #model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    # important to regularize the model and prevent overfitting
-    model.add(Dropout(0.25))
-
+    model.add(Dropout(0.25))   # important to regularize the model and prevent overfitting
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
@@ -55,10 +41,9 @@ def deep_network():
     #model.add(Dense(nb_obj, activation='softmax'))
 
     model.add(Dense(5, activation='sigmoid'))
-    # compile model
 
-    loss_type = "mean_squared_error"
-    # other loss : categorical_crossentropy
+    loss_type = "mean_squared_error"    # other loss : categorical_crossentropy
+
     model.compile(loss=loss_type,
                   optimizer='adam',
                   metrics=['accuracy'])
@@ -66,13 +51,9 @@ def deep_network():
     return model
 
 def train_model(model, nb_epochs, data=None):
+    settings.init()
 
-    from constants import a, b, c, nb_obj, kernel_size, filters, batch_size
-
-    # Load self-generated data into train and test sets
-    # the images are in format (a, b, c)
-    from load_dataset import ld_dtst
-    ((xtr, ytr), (xts, yts)) = ld_dtst()
+    (xtr, ytr) = ld.ld_trnset()
 
     xtr = xtr.astype('float32')
     xtr /= 255
@@ -82,14 +63,18 @@ def train_model(model, nb_epochs, data=None):
                              write_images=True,
                              embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
 
-    model.fit(xtr, ytr, batch_size=batch_size, epochs=nb_epochs, verbose=1, callbacks=[tbCallBack],)
+    model.fit(xtr, ytr, batch_size=settings.batch_size, epochs=settings.nb_epochs, verbose=1, callbacks=[tbCallBack],)
 
 
 def eval_model(model):
-    X_test /= 255
-    X_test = X_test.astype('float32')
+    settings.init()
+
+    (xts, yts) = ld.ld_tstset() 
+
+    xts /= 255
+    xts = xts.astype('float32')
     print("Evaluating model")
-    score = model.evaluate(X_test, Y_test, verbose=1)
+    score = model.evaluate(xts, yts, verbose=1)
     print(score)
 
     if "save" in sys.argv:
