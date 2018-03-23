@@ -12,6 +12,15 @@ See my [internship report.](https://perso.ens-lyon.fr/guillaume.duboc/files/Rapp
 
 `pip install -r requirements.txt` should install all the needed dependencies.
 
+## Usage
+
+You can generate an animation to be used as a dataset in `munge` by calling the `python animation.py -s`. 
+It saves the generated video in `data`.
+
+Then, there are several scripts in `tests` that are meant to test different situations. The only functionnal
+right now, `partial_supervision_no_regression.py` sees what happens to accuracy when you drop a portion of the
+training dataset before training.
+
 ## Architecture
 
 - cache: Preprocessed datasets that don’t need to be re-generated every time you perform an analysis.
