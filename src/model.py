@@ -3,8 +3,9 @@ Training function
 Evaluation function
 """
 
-import settings
 import sys
+sys.path.insert(0, "../config")
+import settings
 
 from keras.callbacks import TensorBoard
 
@@ -22,7 +23,7 @@ def deep_network():
     model = Sequential()
 
     # input layer
-    model.add(Convolution2D(filters, kernel_size,
+    model.add(Convolution2D(settings.filters, settings.kernel_size,
                             activation='relu', input_shape=(settings.a, settings.b, settings.c)))
     model.add(Convolution2D(settings.filters, settings.kernel_size, activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))    # reduce the number of parameters
@@ -50,32 +51,40 @@ def deep_network():
 
     return model
 
-def train_model(model, nb_epochs, data=None):
+def train_model(model, data=None):
     settings.init()
 
-    (xtr, ytr) = ld.ld_trnset()
+    if data is None:
+        (xtr, ytr) = ld.ld_trnset()
+    else:
+        (xtr, ytr) = data
 
     xtr = xtr.astype('float32')
     xtr /= 255
 
     # fit model
-    tbCallBack = TensorBoard(log_dir='../logs', histogram_freq=1, write_graph=True,
+    tbCallBack = TensorBoard(log_dir='../logs/tensorboard_logs/', histogram_freq=0, write_graph=True,
                              write_images=True,
                              embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
 
     model.fit(xtr, ytr, batch_size=settings.batch_size, epochs=settings.nb_epochs, verbose=1, callbacks=[tbCallBack],)
 
 
-def eval_model(model):
+def eval_model(m, data=None):
     settings.init()
 
-    (xts, yts) = ld.ld_tstset() 
+    if data is None:
+        (xts, yts) = ld.ld_tstset() 
+    else:
+        (xts, yts) = data
 
-    xts /= 255
     xts = xts.astype('float32')
+    xts /= 255
     print("Evaluating model")
-    score = model.evaluate(xts, yts, verbose=1)
-    print(score)
+    score = m.evaluate(xts, yts, verbose=1)
+    print()
+    print("[loss, accuracy] =", score)
+    print()
 
     if "save" in sys.argv:
         print("Saving model")

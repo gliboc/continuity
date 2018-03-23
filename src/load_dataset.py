@@ -6,6 +6,9 @@ in the data directory
 import os
 import numpy as np
 from scipy import misc    # Loading & saving functions
+
+import sys
+sys.path.insert(0, "../config")
 import settings
 
 # raw data directory

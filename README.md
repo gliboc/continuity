@@ -28,3 +28,5 @@ See my [internship report.](https://perso.ens-lyon.fr/guillaume.duboc/files/Rapp
 
 - tensorflow
 - keras
+- pygame, Pillow for creating and processing animation dataset
+- bokeh for data visualisation
