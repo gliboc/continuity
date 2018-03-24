@@ -90,7 +90,8 @@ class Obj():
 obj_patterns = []
 li_obj = []
 
-ball = pygame.image.load("ball.bmp")
+pathname = os.path.dirname(sys.argv[0])
+ball = pygame.image.load(os.path.abspath(pathname) + "/ball.bmp")
 ballrect = ball.get_rect()
 
 
